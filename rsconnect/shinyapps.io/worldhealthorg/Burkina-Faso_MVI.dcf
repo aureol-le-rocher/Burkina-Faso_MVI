@@ -1,0 +1,12 @@
+name: Burkina-Faso_MVI
+title: Burkina-Faso_MVI
+username: worldhealthorg
+account: worldhealthorg
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 13286556
+bundleId: 9349922
+url: https://worldhealthorg.shinyapps.io/Burkina-Faso_MVI/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
