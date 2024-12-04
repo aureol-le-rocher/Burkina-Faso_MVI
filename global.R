@@ -16,12 +16,15 @@ pacman::p_load(
   DT,
   leaflet,
   leaflet.extras,
+  officer,
   tidyverse
 )
 
+source("rought_burkina.R")
+
 introdate <- ymd("2024-02-05")
 days_since_intro <- as.numeric(Sys.Date() - introdate)
-last_update <- ymd("2024-11-05")
+last_update <- ymd("2024-11-15")
 
 MONTHS <- c("2024-02-01" = 2, "2024-03-01" = 3, "2024-04-01" = 4, "2024-05-01" = 5, 
             "2024-06-01" = 6, "2024-07-01" = 7, "2024-08-01" = 8, "2024-09-01" = 9,"2024-10-01" = 10)
@@ -46,7 +49,8 @@ db_vaccination_regions <- db_vaccination %>%
                             select(orgunitlevel2,period_date,contains("vap")) %>% 
                             group_by(
                               orgunitlevel2,period_date) %>% 
-                              summarise_all(sum)
+                              summarise_all(sum) %>% 
+                              ungroup()
 
 db_vaccination_regions_cum <- db_vaccination_regions %>%
   group_by(orgunitlevel2) %>%
@@ -69,7 +73,8 @@ db_target <- here("data","target.xlsx") %>%
 db_target_region <- db_target %>% 
                       select(-district) %>% 
                       group_by(region) %>% 
-                      summarise_all(sum)
+                      summarise_all(sum) %>% 
+                      ungroup()
 
 ## Add the target to the administered doses df
 
@@ -79,10 +84,12 @@ db_vaccination_regions_cum <- db_vaccination_regions_cum %>%
 
 db_vaccination_regions_cum <- db_vaccination_regions_cum %>% 
             mutate(
-              cumulative_target_this_month = cibles_annuelles/12*month(period_date),
+              cumulative_target_this_month = cibles_annuelles/12*(month(period_date)-1),
+              cumulative_target_this_month2 = ifelse(cibles_annuelles/12*(month(period_date)-2)<=0,cibles_annuelles/12,cibles_annuelles/12*(month(period_date)-2)),
+              cumulative_target_this_month3 = ifelse(cibles_annuelles/12*(month(period_date)-3)<=0,cibles_annuelles/12,cibles_annuelles/12*(month(period_date)-3)) ,
               cumulative_coverage_vap1 = round(total_vap1/cumulative_target_this_month*100,1),
-              cumulative_coverage_vap2 = round(total_vap2/cumulative_target_this_month*100,1),
-              cumulative_coverage_vap3 = round(total_vap3/cumulative_target_this_month*100,1)
+              cumulative_coverage_vap2 = round(total_vap2/cumulative_target_this_month2*100,1),
+              cumulative_coverage_vap3 = round(total_vap3/cumulative_target_this_month3*100,1)
             )
 
 
@@ -98,15 +105,16 @@ db_vaccination_district_cum <- db_vaccination %>%
 db_vaccination_district_cum <- db_vaccination_district_cum %>%
                             left_join(
                               db_target %>% select(-cibles_mensuelles),
-                              by = c("orgunitlevel4" = "district","orgunitlevel2" = "region")
-                            )
+                              by = c("orgunitlevel4" = "district","orgunitlevel2" = "region"))
 
 db_vaccination_district_cum <- db_vaccination_district_cum %>% 
   mutate(
-    cumulative_target_this_month = cibles_annuelles/12*month(period_date),
+    cumulative_target_this_month = cibles_annuelles/12*(month(period_date)-1),
+    cumulative_target_this_month2 = ifelse(cibles_annuelles/12*(month(period_date)-2)<=0,cibles_annuelles/12,cibles_annuelles/12*(month(period_date)-2)),
+    cumulative_target_this_month3 = ifelse(cibles_annuelles/12*(month(period_date)-3)<=0,cibles_annuelles/12,cibles_annuelles/12*(month(period_date)-3)) ,
     cumulative_coverage_vap1 = round(total_vap1/cumulative_target_this_month*100,1),
-    cumulative_coverage_vap2 = round(total_vap2/cumulative_target_this_month*100,1),
-    cumulative_coverage_vap3 = round(total_vap3/cumulative_target_this_month*100,1)
+    cumulative_coverage_vap2 = round(total_vap2/cumulative_target_this_month2*100,1),
+    cumulative_coverage_vap3 = round(total_vap3/cumulative_target_this_month3*100,1)
   )
 
 ### Monthly analysis
@@ -213,10 +221,12 @@ tab1_national <- tab2 %>%
          period_date = as.Date(period_date),
          n_month = month(period_date),
          annual_coverage = annual_coverage,
-         target_this_month = annual_coverage/12*n_month,
+         target_this_month = annual_coverage/12*(n_month-1),
+         target_this_month2 = ifelse(annual_coverage/12*(n_month-2)<=0,annual_coverage/12,annual_coverage/12*(n_month-2)),
+         target_this_month3 = ifelse(annual_coverage/12*(n_month-3)<=0,annual_coverage/12,annual_coverage/12*(n_month-3)),
          cumulative_coverage_vap1 = round(admin_doses_vap1_cumulative/target_this_month*100,2),
-         cumulative_coverage_vap2 = round(admin_doses_vap2_cumulative/target_this_month*100,2),
-         cumulative_coverage_vap3 = round(admin_doses_vap3_cumulative/target_this_month*100,2),
+         cumulative_coverage_vap2 = round(admin_doses_vap2_cumulative/target_this_month2*100,2),
+         cumulative_coverage_vap3 = round(admin_doses_vap3_cumulative/target_this_month3*100,2),
   ) %>% ungroup()
 
 tab2_national <- tab1 %>% 
@@ -263,6 +273,43 @@ formatted_data <- tab_join_overall %>%
 
 
  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -595,6 +642,5 @@ css <- '
   border-radius: 4px;
   border: 1px solid #e0e0e0;
 }
-
   
 '

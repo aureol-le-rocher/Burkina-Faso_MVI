@@ -124,8 +124,6 @@ tabsetPanel(
                         )
                       )
                     )
-                    
-                    
              )
            )
            
@@ -338,7 +336,7 @@ tags$footer(
   ) #,
 #  div(
 #    class = "footer-bottom",
-#    p("© 2024 Tous droits réservés")
+#    p("© WHO AFRO,2024 Tous droits réservés")
 #  )
 )
   

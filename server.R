@@ -47,8 +47,7 @@ server <- function(input,output,session){
     paste0(100,"%")
   })
   
-  # Use prettynum
-  
+  # values box
   db_valuebox <- reactive({
     
     db_vaccination_regions_cum %>% 
@@ -58,9 +57,10 @@ server <- function(input,output,session){
       ungroup() %>% 
       mutate(
         cumulative_coverage_vap1 = round(total_vap1/cumulative_target_this_month*100,1),
-        cumulative_coverage_vap2 = round(total_vap2/cumulative_target_this_month*100,1),
-        cumulative_coverage_vap3 = round(total_vap3/cumulative_target_this_month*100,1),
-        orgunitlevel2 = "National",period_date = as.Date(period_date)) %>% filter(period_date == max(period_date))
+        cumulative_coverage_vap2 = round(total_vap2/cumulative_target_this_month2*100,1),
+        cumulative_coverage_vap3 = round(total_vap3/cumulative_target_this_month3*100,1),
+        orgunitlevel2 = "National",period_date = as.Date(period_date)) %>% 
+      filter(period_date == max(period_date))
     
   })
   
@@ -1128,27 +1128,27 @@ server <- function(input,output,session){
         style = list(fontFamily = "Inter, Arial, sans-serif"), 
         backgroundColor = "#FFFFFF", 
         crosshair = list(
-          color = 'rgba(48, 48, 48, 0.8)', # Semi-transparent crosshair
+          color = 'rgba(48, 48, 48, 0.8)', 
           dashStyle = 'Dash',
           width = 1,
           zIndex = 5
         ),
-        animation = list(duration = 1000) # Smooth initial animation
+        animation = list(duration = 1000) 
       ) %>%
       hc_title(
         text = str_glue("Couverture vaccinale cumulée VAP dans le temps - District de {input$choose_district}"),
         style = list(
           fontSize = "24px", 
           fontWeight = "600",
-          color = "#1A237E"  # Darker blue for better contrast
+          color = "#1A237E"  
         ),
-        align = "left"  # Left-aligned title for modern look
+        align = "left"  # Left-aligned title 
       ) %>%
       hc_subtitle(
         text = "Présentation des tendances de couverture VAP1, VAP2, et VAP3",
         style = list(
           fontSize = "16px",
-          color = "#546E7A"  # Subtle gray for subtitle
+          color = "#546E7A"  
         ),
         align = "left"
       ) %>%
@@ -1181,20 +1181,20 @@ server <- function(input,output,session){
         ),
         min = 0,
         max = 150,
-        tickInterval = 25  # Consistent tick intervals
+        tickInterval = 25  
       ) %>%
       hc_add_series(
         name = "Couverture VAP1",
         data = filtered_data_district_cum()$cumulative_coverage_vap1,
         type = "line",
-        color = "#1976D2",  # More muted blue
+        color = "#1976D2", 
         lineWidth = 2.5
       ) %>%
       hc_add_series(
         name = "Couverture VAP2",
         data = filtered_data_district_cum()$cumulative_coverage_vap2,
         type = "line",
-        color = "#388E3C",  # More muted green
+        color = "#388E3C",  
         lineWidth = 2.5
       ) %>%
       hc_add_series(
@@ -1303,27 +1303,27 @@ server <- function(input,output,session){
         style = list(fontFamily = "Inter, Arial, sans-serif"), 
         backgroundColor = "#FFFFFF", 
         crosshair = list(
-          color = 'rgba(48, 48, 48, 0.8)', # Semi-transparent crosshair
+          color = 'rgba(48, 48, 48, 0.8)',
           dashStyle = 'Dash',
           width = 1,
           zIndex = 5
         ),
-        animation = list(duration = 1000) # Smooth initial animation
+        animation = list(duration = 1000) 
       ) %>%
       hc_title(
         text = str_glue("Couverture vaccinale mensuelle VAP - District de {input$choose_district}"),
         style = list(
           fontSize = "24px", 
           fontWeight = "600",
-          color = "#1A237E"  # Darker blue for better contrast
+          color = "#1A237E"  
         ),
-        align = "left"  # Left-aligned title for modern look
+        align = "left"  
       ) %>%
       hc_subtitle(
         text = "Présentation des tendances de couverture VAP1, VAP2, et VAP3",
         style = list(
           fontSize = "16px",
-          color = "#546E7A"  # Subtle gray for subtitle
+          color = "#546E7A"  
         ),
         align = "left"
       ) %>%
@@ -1356,20 +1356,20 @@ server <- function(input,output,session){
         ),
         min = 0,
         max = 150,
-        tickInterval = 25  # Consistent tick intervals
+        tickInterval = 25  
       ) %>%
       hc_add_series(
         name = "Couverture VAP1",
         data = filtered_data_district()$cumulative_coverage_vap1,
         type = "line",
-        color = "#1976D2",  # More muted blue
+        color = "#1976D2", 
         lineWidth = 2.5
       ) %>%
       hc_add_series(
         name = "Couverture VAP2",
         data = filtered_data_district()$cumulative_coverage_vap2,
         type = "line",
-        color = "#388E3C",  # More muted green
+        color = "#388E3C",  
         lineWidth = 2.5
       ) %>%
       hc_add_series(
@@ -1437,11 +1437,11 @@ server <- function(input,output,session){
           fontWeight = "500",
           color = "#263238"
         ),
-        itemHoverStyle = list(color = "#1A237E"),  # Darker on hover
+        itemHoverStyle = list(color = "#1A237E"),  
         borderWidth = 0,
         backgroundColor = "rgba(255, 255, 255, 0.9)",
         padding = 16,
-        symbolRadius = 2  # Squared legend markers
+        symbolRadius = 2  
       ) %>%
       hc_credits(enabled = FALSE) %>%
       hc_exporting(
@@ -1456,7 +1456,7 @@ server <- function(input,output,session){
         chartOptions = list(
           plotOptions = list(
             series = list(
-              animation = FALSE  # Disable animation in exported charts
+              animation = FALSE  
             )
           )
         )
@@ -1960,7 +1960,7 @@ server <- function(input,output,session){
                        zoomDelta = 0.25,
                        wheelPxPerZoomLevel = 100
                      )) %>% 
-      # Add multiple base tile layers for more context
+      # base tile layers 
       addProviderTiles(providers$CartoDB.Positron, group = "CartoDB Light") %>%
       addProviderTiles(providers$CartoDB.DarkMatter, group = "CartoDB Dark") %>%
       addProviderTiles(providers$Esri.WorldImagery, group = "Satellite") %>%
@@ -1968,7 +1968,7 @@ server <- function(input,output,session){
       setView(lng = lon_center, lat = lat_center, zoom = initial_zoom) %>%
       addMapPane("polygons", zIndex = 420) %>% 
       
-      # Enhanced scale bar
+      # Add scale bar
       addScaleBar(
         position = "bottomleft",
         options = scaleBarOptions(
@@ -1978,7 +1978,7 @@ server <- function(input,output,session){
           updateWhenIdle = TRUE)
       ) %>% 
       
-      # Add mini map for context
+      # Add mini map
       addMiniMap(
         toggleDisplay = TRUE,
         tiles = providers$CartoDB.Positron,
@@ -1987,7 +1987,7 @@ server <- function(input,output,session){
         height = 150
       ) %>% 
       
-      # VAP1 Layer with enhanced tooltip
+      # VAP1 Layer 
       addPolygons(
         data = bkfaso_shp,
         stroke = TRUE,
@@ -2040,6 +2040,7 @@ server <- function(input,output,session){
           opacity = 1
         )
       ) %>% 
+      # VAP2 Layer
       addPolygons(
         data = bkfaso_shp,
         stroke = TRUE,
@@ -2092,6 +2093,7 @@ server <- function(input,output,session){
           opacity = 1
         )
       ) %>% 
+      # VAP 3 layer
       addPolygons(
         data = bkfaso_shp,
         stroke = TRUE,
@@ -2144,7 +2146,7 @@ server <- function(input,output,session){
           opacity = 1
         )
       ) %>% 
-      # Moved legends to the left
+      # add legends to the left
       addLegend(
         position = "bottomright",
         colors = c("#ff0000", "#ffa500", "#ffff00", "#006400", "#a9a9a9"),
@@ -2202,7 +2204,7 @@ server <- function(input,output,session){
         className = "info legend custom-legend",
         layerId = "legend3"
       ) %>% 
-      # Enhanced layers control
+      # layers control
       addLayersControl(
         baseGroups = c("Couverture vaccinale VAP1", 
                        "Couverture vaccinale VAP2", 
@@ -2244,8 +2246,8 @@ server <- function(input,output,session){
       ungroup() %>% 
       mutate(
         cumulative_coverage_vap1 = round(total_vap1/cumulative_target_this_month*100,1),
-        cumulative_coverage_vap2 = round(total_vap2/cumulative_target_this_month*100,1),
-        cumulative_coverage_vap3 = round(total_vap3/cumulative_target_this_month*100,1),
+        cumulative_coverage_vap2 = round(total_vap2/cumulative_target_this_month2*100,1),
+        cumulative_coverage_vap3 = round(total_vap3/cumulative_target_this_month3*100,1),
         orgunitlevel2 = "National") %>%
      # filter(period_date >= ymd(input$startMonth),period_date <= ymd(input$endMonth))%>% 
       mutate(
@@ -2257,27 +2259,27 @@ server <- function(input,output,session){
       style = list(fontFamily = "Inter, Arial, sans-serif"), 
       backgroundColor = "#FFFFFF", 
       crosshair = list(
-        color = 'rgba(48, 48, 48, 0.8)', # Semi-transparent crosshair
+        color = 'rgba(48, 48, 48, 0.8)', 
         dashStyle = 'Dash',
         width = 1,
         zIndex = 5
       ),
-      animation = list(duration = 1000) # Smooth initial animation
+      animation = list(duration = 1000) 
     ) %>%
     hc_title(
       text = str_glue("Couverture vaccinale cumulée VAP dans le temps - Niveau National"),
       style = list(
         fontSize = "24px", 
         fontWeight = "600",
-        color = "#1A237E"  # Darker blue for better contrast
+        color = "#1A237E"  
       ),
-      align = "left"  # Left-aligned title for modern look
+      align = "left"  
     ) %>%
     hc_subtitle(
       text = "Présentation des tendances de couverture VAP1, VAP2, et VAP3",
       style = list(
         fontSize = "16px",
-        color = "#546E7A"  # Subtle gray for subtitle
+        color = "#546E7A"  
       ),
       align = "left"
     ) %>%
@@ -2288,7 +2290,7 @@ server <- function(input,output,session){
         style = list(fontWeight = "500")
       ),
       gridLineWidth = 0.5,
-      gridLineColor = "rgba(224, 224, 224, 0.5)",  # Lighter grid
+      gridLineColor = "rgba(224, 224, 224, 0.5)",  
       labels = list(
         style = list(fontSize = "12px", color = "#37474F"),
         rotation = -45,
@@ -2309,21 +2311,21 @@ server <- function(input,output,session){
         style = list(color = "#37474F")
       ),
       min = 0,
-      max = 150,
-      tickInterval = 25  # Consistent tick intervals
+      max = 110,
+      tickInterval = 25  
     ) %>%
     hc_add_series(
       name = "Couverture VAP1",
       data = data$cumulative_coverage_vap1,
       type = "line",
-      color = "#1976D2",  # More muted blue
+      color = "#1976D2",  
       lineWidth = 2.5
     ) %>%
     hc_add_series(
       name = "Couverture VAP2",
       data = data$cumulative_coverage_vap2,
       type = "line",
-      color = "#388E3C",  # More muted green
+      color = "#388E3C",  
       lineWidth = 2.5
     ) %>%
     hc_add_series(
@@ -2395,7 +2397,7 @@ server <- function(input,output,session){
       borderWidth = 0,
       backgroundColor = "rgba(255, 255, 255, 0.9)",
       padding = 16,
-      symbolRadius = 2  # Squared legend markers
+      symbolRadius = 2  
     ) %>%
     hc_credits(enabled = FALSE) %>%
     hc_exporting(
@@ -2410,7 +2412,7 @@ server <- function(input,output,session){
       chartOptions = list(
         plotOptions = list(
           series = list(
-            animation = FALSE  # Disable animation in exported charts
+            animation = FALSE  
           )
         )
       )
@@ -2420,8 +2422,6 @@ server <- function(input,output,session){
       useGPUTranslations = TRUE,
       usePreallocated = TRUE
     )
-  
-    
     
   })
   
@@ -2458,7 +2458,7 @@ server <- function(input,output,session){
       )
     
     
-    # First identify which columns actually exist in the data
+    
     datatable(
       formatted_data,
       options = list(
